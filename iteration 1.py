@@ -8,8 +8,8 @@ def iterate(rho,rho_max,R_e):
     for i in range(2):
         phi=Phi(rho,rho_max,R_e)
         q=rho_max/b #b=1.964e6 g cm^-3
-        h_0=2*(phi[A]-phi[B])
-        F=-phi+(h_0/2)*square(X/R_e)#X is the meshgrid of X coordinate (unit length)
+        h_0=2*(phi[A]-phi[B])/square(X/R_e) #X is the meshgrid of X coordinate (dimension length)
+        F=-phi+(phi[A]-phi[B])
         F_max=max(F[:int(A[0]),:int(B[1])]) #restrict F_max in a rectangle enclosing the wd 
         C=(F_max-F[A]*sqrt(1+(q)**(2./3.)))/(sqrt(1+(q)**(2./3.))-1)
         H=F+C
@@ -31,14 +31,14 @@ def iterate(rho,rho_max,R_e):
     	h_n,C_n,H_n=(h_m,C_m,H_m)
     	phi=Phi(rho,rho_max,R_e)
         q=rho_max/b 
-        h_0=2*(phi[A]-phi[B])
-        F=-phi+(h_0/2)*square(X/R_e)
+        h_0=2*(phi[A]-phi[B])/square(X/R_e) 
+        F=-phi+(phi[A]-phi[B])
         F_max=max(F[:int(A[0]),:int(B[1])]) 
         C=(F_max-F[A]*sqrt(1+(q)**(2./3.)))/(sqrt(1+(q)**(2./3.))-1)
         H=F+C
         H_max=max(H[:int(A[0]),:int(B[1])]) 
         h_m,C_m,H_m=(h_0,C,H_max)
-            H_ratio,h_ratio,C_ratio=(abs(1-(H_n/H_m)),abs(1-(h_n/h_m)),abs(1-(C_n/C_m)))
+        H_ratio,h_ratio,C_ratio=(abs(1-(H_n/H_m)),abs(1-(h_n/h_m)),abs(1-(C_n/C_m)))
         for t in list(itertools.product(range(shape(rho)[0]),range(shape(rho)[1]))): 
             if H[t]>=0:
                 rho[t]=(max((1+(q)**(2./3.))*square(H[t]/H_max)-1,0)**1.5)/q
